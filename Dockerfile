@@ -1,11 +1,7 @@
 
 FROM node:14
 EXPOSE 3000
-
-RUN mkdir -p /home/app
-COPY . /home/app
-
-RUN cd /home/app
+WORKDIR .
+COPY . .
 RUN npm i
-
-ENTRYPOINT [ "node", "/home/app/app.js" ]
+ENTRYPOINT [ "node", "app.js" ]
