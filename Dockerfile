@@ -1,10 +1,11 @@
 
 FROM node:14
+EXPOSE 3000
 
 RUN mkdir -p /home/app
 COPY . /home/app
 
-RUN npm i /home/app/package.json
+RUN cd /home/app
+RUN npm i
 
-EXPOSE 3000
-CMD [ "node", "/home/app/app.js" ]
+ENTRYPOINT [ "node", "/home/app/app.js" ]
