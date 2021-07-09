@@ -36,5 +36,52 @@ app.get("/app/api/movies/:id", (req, res) => {
     });
   else
     res.send(movie);
+    
+});
+
+app.post("/app/api/movies", (req, res) => {
+  
+  let movie = {
+    id: movies.length + 1,
+    name: req.body.name,
+    director: req.body.director
+  }
+  
+  movies.push(movie);
+  res.send(movie);
+  
+});
+
+app.put("/app/api/movies", (req, res) => {
+  
+  let movie = {};
+  
+  movies.forEach(m => {
+    if (m.id === parseInt(req.body.id))
+      movie = m;
+  });
+  
+  if (!movie)
+    res.send({msgException: `Movie not found with id : ${req.body.id}`});
+  else {
+    movie.name = req.body.name;
+    movie.director = req.body.director;
+    res.send(movie);
+  }
+  
+});
+
+app.delete("/app/api/movies/:id", (req, res) => {
+  
+  let movie = movies.find(m => m.id === parseInt(req.params.id));
+  if (!movie)
+    res.status(404)
+        .send({msgException: `Movie does not exist with id: ${req.body.id}`});
+  else {
+    movies.splice(movies.indexOf(movie), 1);
+    res.status(200)
+        .send(`Movie with id: ${movie.id} is deleted successfully`);
+  }
+  
 });
 
