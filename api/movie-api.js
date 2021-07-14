@@ -1,30 +1,43 @@
 
 const express = require("express");
 const movieRoute = express.Router();
+const mongoose = require("mongoose");
 
+const username = 'Reese';
+const password = 'Dashwood';
+const dbName = 'movie_catalog_db';
+
+const dbUrl = `mongodb+srv://${username}:${password}@cluster0.x0b5m.mongodb.net/${dbName}?retryWrites=true&w=majority`;
+mongoose.connect(dbUrl, {useNewUrlParser: true, useUnifiedTopology: true})
+        .then((response) => console.log("Connected!"))
+        .catch((error) => console.log(error));
+
+const movies = [];
+/*
 const movies = [
-  {id: 1, name: "Interstellar", director: "Christopher Nolan"},
-  {id: 2, name: "TENET", director: "Christopher Nolan"},
-  {id: 3, name: "Inception", director: "Christopher Nolan"},
-  {id: 4, name: "The Dark Knight Trilogy", director: "Christopher Nolan"},
-  {id: 5, name: "Inglorious Basterds", director: "Quentin Tarantino"},
-  {id: 6, name: "Once upon a time in hollywood", director: "Quentin Tarantino"},
-  {id: 7, name: "Titanic", director: "James Cameron"},
-  {id: 8, name: "Avatar", director: "James Cameron"},
-  {id: 9, name: "Dunkirk", director: "Christopher Nolan"}
+  {movieId: 1, name: "Interstellar", director: "Christopher Nolan"},
+  {movieId: 2, name: "TENET", director: "Christopher Nolan"},
+  {movieId: 3, name: "Inception", director: "Christopher Nolan"},
+  {movieId: 4, name: "The Dark Knight Trilogy", director: "Christopher Nolan"},
+  {movieId: 5, name: "Inglorious Basterds", director: "Quentin Tarantino"},
+  {movieId: 6, name: "Once upon a time in hollywood", director: "Quentin Tarantino"},
+  {movieId: 7, name: "Titanic", director: "James Cameron"},
+  {movieId: 8, name: "Avatar", director: "James Cameron"},
+  {movieId: 9, name: "Dunkirk", director: "Christopher Nolan"}
 ];
+*/
 
 movieRoute.get("/movies", (req, res) => {
   res.send(movies);
 });
 
-movieRoute.get("/movies/:id", (req, res) => {
+movieRoute.get("/movies/:movieId", (req, res) => {
   
-  let movie = movies.find(m => m.id === parseInt(req.params.id));
+  let movie = movies.find(m => m.movieId === parseInt(req.params.movieId));
   
   if (!movie)
     res.send({
-      msgException: `### No movie found with id : ${req.params.id} ###` 
+      msgException: `### No movie found with movieId : ${req.params.movieId} ###` 
     });
   else
     res.send(movie);
@@ -34,7 +47,7 @@ movieRoute.get("/movies/:id", (req, res) => {
 movieRoute.post("/movies", (req, res) => {
   
   let movie = {
-    id: movies.length + 1,
+    movieId: movies.length + 1,
     name: req.body.name,
     director: req.body.director
   }
@@ -49,12 +62,12 @@ movieRoute.put("/movies", (req, res) => {
   let movie = {};
   
   movies.forEach(m => {
-    if (m.id === parseInt(req.body.id))
+    if (m.movieId === parseInt(req.body.movieId))
       movie = m;
   });
   
   if (!movie)
-    res.send({msgException: `Movie not found with id : ${req.body.id}`});
+    res.send({msgException: `Movie not found with movieId : ${req.body.movieId}`});
   else {
     movie.name = req.body.name;
     movie.director = req.body.director;
@@ -63,16 +76,16 @@ movieRoute.put("/movies", (req, res) => {
   
 });
 
-movieRoute.delete("/movies/:id", (req, res) => {
+movieRoute.delete("/movies/:movieId", (req, res) => {
   
-  let movie = movies.find(m => m.id === parseInt(req.params.id));
+  let movie = movies.find(m => m.movieId === parseInt(req.params.movieId));
   if (!movie)
     res.status(404)
-        .send({msgException: `Movie does not exist with id: ${req.body.id}`});
+        .send({msgException: `Movie does not exist with movieId: ${req.body.movieId}`});
   else {
     movies.splice(movies.indexOf(movie), 1);
     res.status(200)
-        .send(`Movie with id: ${movie.id} is deleted successfully`);
+        .send(`Movie with movieId: ${movie.movieId} is deleted successfully`);
   }
   
 });
