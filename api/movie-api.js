@@ -2,6 +2,7 @@
 const express = require("express");
 const movieRoute = express.Router();
 const mongoose = require("mongoose");
+const Movie = require("../model/Movie");
 
 const username = 'Reese';
 const password = 'Dashwood';
@@ -12,48 +13,44 @@ mongoose.connect(dbUrl, {useNewUrlParser: true, useUnifiedTopology: true})
         .then((response) => console.log("Connected!"))
         .catch((error) => console.log(error));
 
-const movies = [];
-/*
-const movies = [
-  {movieId: 1, name: "Interstellar", director: "Christopher Nolan"},
-  {movieId: 2, name: "TENET", director: "Christopher Nolan"},
-  {movieId: 3, name: "Inception", director: "Christopher Nolan"},
-  {movieId: 4, name: "The Dark Knight Trilogy", director: "Christopher Nolan"},
-  {movieId: 5, name: "Inglorious Basterds", director: "Quentin Tarantino"},
-  {movieId: 6, name: "Once upon a time in hollywood", director: "Quentin Tarantino"},
-  {movieId: 7, name: "Titanic", director: "James Cameron"},
-  {movieId: 8, name: "Avatar", director: "James Cameron"},
-  {movieId: 9, name: "Dunkirk", director: "Christopher Nolan"}
-];
-*/
+
 
 movieRoute.get("/movies", (req, res) => {
-  res.send(movies);
+  Movie.find()
+      .then((response) => res.send(response))
+      .catch((error) => console.log(error));
 });
 
-movieRoute.get("/movies/:movieId", (req, res) => {
+movieRoute.get("/movies/:id", (req, res) => {
+  Movie.findById(req.params.id)
+        .then((response) => res.send(response))
+        .catch((error) => console.log(error));
+});
+
+movieRoute.get("/movies/movieId/:movieId", (req, res) => {
   
-  let movie = movies.find(m => m.movieId === parseInt(req.params.movieId));
-  
-  if (!movie)
-    res.send({
-      msgException: `### No movie found with movieId : ${req.params.movieId} ###` 
-    });
-  else
-    res.send(movie);
-    
+  Movie.find({movieId: parseInt(req.params.movieId)})
+        .then((response) => res.send(response))
+        .catch((error) => console.log(error));
 });
 
 movieRoute.post("/movies", (req, res) => {
   
-  let movie = {
-    movieId: movies.length + 1,
-    name: req.body.name,
-    director: req.body.director
-  }
+  Movie.find()
+    .then((list) => {
+      
+      const movie = new Movie({
+        movieId: list.length + 1,
+        name: req.body.name,
+        director: req.body.director
+      });
   
-  movies.push(movie);
-  res.send(movie);
+      movie.save()
+        .then((response) => res.send(response))
+        .catch((error) => console.log(error));
+      
+    })
+    .catch((error) => console.log(error));
   
 });
 

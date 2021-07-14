@@ -4,18 +4,18 @@ const Schema = mongoose.Schema;
 
 const movieSchema = new Schema({
   movieId: {
-    type: String,
+    type: Number,
     required: false
   },
   name: {
     type: String,
-    required: true
+    required: false
   },
   director: {
     type: String,
-    required: true
+    required: false
   }
-}, {timestamps: true});
+}, {timestamps: false});
 
 const Movie = mongoose.model('Movie', movieSchema);
 
